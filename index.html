@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uniform Distribution Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg bg-primary">
+    <div class="container-fluid ">
+      <a class="navbar-brand text-white" href="index.html">Uniform</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active text-white" aria-current="page" href="reports.html">Reports</a>
+          </li>
+        </ul>
+  
+        <div class="d-flex">
+          <button class="btn btn-danger">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <!-- Select School Form -->
+      <div class="border p-5">
+        <form id="select-school-form">
+
+          <!-- School and Admission -->
+          <div class="form-group mb-3" id="school">
+            <label for="school" class="form-label">School</label>
+            <select class="form-select" id="school" required>
+              <option value="">Select School</option>
+              <option value="1">Matriculation School</option>
+              <option value="2">Other School</option>
+              <!-- Populate options dynamically from database -->
+            </select>
+          </div>
+          <div class="form-group mb-3" id="admissionNumber">
+            <label for="admission-no" class="form-label">Admission Number</label>
+            <input type="text" class="form-control" id="admission-no" placeholder="Enter admission number" required>
+            <div class="invalid-feedback">Please enter admission number.</div>
+          </div>
+
+          <!-- Student Details -->
+          <div class="mb-3" id="studentDetails">
+            <table class="table table-bordered">
+              <tbody>
+                <tr>
+                  <td>Admission No</td>
+                  <td>AD001</td>
+                </tr>
+                <tr>
+                  <td>Temporary No</td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Name</td>
+                  <td>Chris Robin</td>
+                </tr>
+                <tr>
+                  <td>Standard</td>
+                  <td>5</td>
+                </tr>
+                <tr>
+                  <td>Divison</td>
+                  <td>A</td>
+                </tr>
+                <tr>
+                  <td>Gender</td>
+                  <td>Male</td>
+                </tr>
+              </tbody>
+            </table>            
+          </div>
+
+          <hr>
+
+          <!-- Exchange -->
+          <div class="form-group mb-3" id="exchangeSection">
+            <label for="exchange" class="form-label">Is Exchange?</label>
+            <select class="form-select" id="exchange" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+
+          <!-- Return -->
+          <div class="form-group mb-3" id="exchangeSection">
+            <label for="exchange" class="form-label">Is Just return?</label>
+            <select class="form-select" id="exchange" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>    
+          
+          <hr>
+
+          <!-- Uniform -->
+          <div class="form-group mb-3" id="schoolUniformSection">
+            <label for="schoolUniform" class="form-label">Is school uniform?</label>
+            <select class="form-select" id="schoolUniform" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="mb-3" id="uniformDetails">
+            <table class="table table-bordered">
+              <thead>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Qty</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>H/S Shirt</td>
+                  <td>22</td>
+                  <td rowspan="2">
+                    <select class="form-select" id="uniformQty" required>
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Shorts</td>
+                  <td>24</td>
+                </tr>
+              </tbody>
+            </table>            
+          </div>  
+
+          <hr>
+          
+          <!-- Sports Uniform -->
+          <div class="form-group mb-3" id="schoolUniformSection">
+            <label for="schoolUniform" class="form-label">Is sports uniform?</label>
+            <select class="form-select" id="schoolUniform" required>
+              <option value="0">No</option>
+              <option value="1">Yes</option>
+            </select>
+          </div>
+          <div class="mb-3" id="uniformDetails">
+            <table class="table table-bordered">
+              <thead>
+                <th>Type</th>
+                <th>Size</th>
+                <th>Qty</th>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>H/S Shirt</td>
+                  <td>22</td>
+                  <td rowspan="2">
+                    <select class="form-select" id="uniformQty" required>
+                      <option value="0">0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                    </select>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Shorts</td>
+                  <td>24</td>
+                </tr>
+              </tbody>
+            </table>            
+          </div>
+
+          <!-- Remarks -->
+          <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Notes or Remarks</label>
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+          </div>          
+
+          <div class="text-center">
+            <button type="submit" class="btn btn-secondary">Reset</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS and Firebase SDK -->
+<script src="./vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="./assets/js/firebase.js"></script>
+</body>
+</html>
