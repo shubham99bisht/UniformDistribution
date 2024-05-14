@@ -6,6 +6,8 @@
   <title>Uniform Distribution Management</title>
   <!-- Bootstrap CSS -->
   <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Datepicker CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">  
 </head>
 <body>
 
@@ -21,183 +23,212 @@
             <a class="nav-link active text-white" aria-current="page" href="reports.html">Reports</a>
           </li>
         </ul>
-  
+
         <div class="d-flex">
-          <button class="btn btn-danger">Log Out</button>
+          <button class="btn btn-danger" id="logoutBtn">Log Out</button>
         </div>
       </div>
     </div>
   </nav>
 
-<div class="container mt-5">
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <!-- Select School Form -->
-      <div class="border p-5">
-        <form id="select-school-form">
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col col-lg-8">
+        <!-- Select School Form -->
+        <div class="border p-5">
+          <form id="schoolUniformForm" class="row">
 
-          <!-- School and Admission -->
-          <div class="form-group mb-3" id="school">
-            <label for="school" class="form-label">School</label>
-            <select class="form-select" id="school" required>
-              <option value="">Select School</option>
-              <option value="1">Matriculation School</option>
-              <option value="2">Other School</option>
-              <!-- Populate options dynamically from database -->
-            </select>
-          </div>
-          <div class="form-group mb-3" id="admissionNumber">
-            <label for="admission-no" class="form-label">Admission Number</label>
-            <input type="text" class="form-control" id="admission-no" placeholder="Enter admission number" required>
-            <div class="invalid-feedback">Please enter admission number.</div>
-          </div>
+            <!-- Distributor -->
+            <div class="col-md-6 mb-3">
+              <label for="distributedBy" class="form-label">Distributed By</label>
+              <input type="text" class="form-control" id="distributedBy" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="distributedOn" class="form-label">Distributed On</label>
+              <input type="text" class="form-control" id="distributedOn" placeholder="Select a date" required>              
+            </div>
 
-          <!-- Student Details -->
-          <div class="mb-3" id="studentDetails">
-            <table class="table table-bordered">
-              <tbody>
-                <tr>
-                  <td>Admission No</td>
-                  <td>AD001</td>
-                </tr>
-                <tr>
-                  <td>Temporary No</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td>Name</td>
-                  <td>Chris Robin</td>
-                </tr>
-                <tr>
-                  <td>Standard</td>
-                  <td>5</td>
-                </tr>
-                <tr>
-                  <td>Divison</td>
-                  <td>A</td>
-                </tr>
-                <tr>
-                  <td>Gender</td>
-                  <td>Male</td>
-                </tr>
-              </tbody>
-            </table>            
-          </div>
+            <!-- School and Admission -->
+            <div class="form-group col-12 mb-3">
+              <label for="school" class="form-label">School</label>
+              <select class="form-select" id="school" required>
+                <option selected disabled>Select School</option>
+                <option value="1">Memorial School</option>
+                <option value="2">Matriculation School</option>
+              </select>
+            </div>
 
-          <hr>
+            <!-- Admission Number -->
+            <div class="form-group col-md-6 mb-3">
+              <label for="admissionNo" class="form-label">Admission Number</label>
+              <input type="text" class="form-control" id="admissionNo" placeholder="Enter admission number" required>
+            </div>
+            <div class="form-group col-md-6 mb-3">
+              <label class="form-label">&nbsp</label>
+              <div class="d-grid">
+                <button class="btn btn-primary" type="button" onclick="fetchStudentData()">Fetch Details</button>
+              </div>
+            </div>
 
-          <!-- Exchange -->
-          <div class="form-group mb-3" id="exchangeSection">
-            <label for="exchange" class="form-label">Is Exchange?</label>
-            <select class="form-select" id="exchange" required>
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
+            <!-- Student Details -->
+            <div class="mb-3">
+              <table class="table table-bordered" id="studentDetails">
+                <tbody>
+                  <tr>
+                    <td>Admission No</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Temporary No</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Name</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Standard</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Divison</td>
+                    <td>-</td>
+                  </tr>
+                  <tr>
+                    <td>Gender</td>
+                    <td>-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-          <!-- Return -->
-          <div class="form-group mb-3" id="exchangeSection">
-            <label for="exchange" class="form-label">Is Just return?</label>
-            <select class="form-select" id="exchange" required>
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>    
-          
-          <hr>
+            <hr>
 
-          <!-- Uniform -->
-          <div class="form-group mb-3" id="schoolUniformSection">
-            <label for="schoolUniform" class="form-label">Is school uniform?</label>
-            <select class="form-select" id="schoolUniform" required>
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-          <div class="mb-3" id="uniformDetails">
-            <table class="table table-bordered">
-              <thead>
-                <th>Type</th>
-                <th>Size</th>
-                <th>Qty</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>H/S Shirt</td>
-                  <td>22</td>
-                  <td rowspan="2">
-                    <select class="form-select" id="uniformQty" required>
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Shorts</td>
-                  <td>24</td>
-                </tr>
-              </tbody>
-            </table>            
-          </div>  
+            <!-- Exchange -->
+            <div class="form-group mb-3">
+              <label for="isExchange" class="form-label">Is Exchange?</label>
+              <select class="form-select" id="isExchange" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
 
-          <hr>
-          
-          <!-- Sports Uniform -->
-          <div class="form-group mb-3" id="schoolUniformSection">
-            <label for="schoolUniform" class="form-label">Is sports uniform?</label>
-            <select class="form-select" id="schoolUniform" required>
-              <option value="0">No</option>
-              <option value="1">Yes</option>
-            </select>
-          </div>
-          <div class="mb-3" id="uniformDetails">
-            <table class="table table-bordered">
-              <thead>
-                <th>Type</th>
-                <th>Size</th>
-                <th>Qty</th>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>H/S Shirt</td>
-                  <td>22</td>
-                  <td rowspan="2">
-                    <select class="form-select" id="uniformQty" required>
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                    </select>
-                  </td>
-                </tr>
-                <tr>
-                  <td>Shorts</td>
-                  <td>24</td>
-                </tr>
-              </tbody>
-            </table>            
-          </div>
+            <!-- Return -->
+            <div class="form-group mb-3">
+              <label for="isReturn" class="form-label">Is Just return?</label>
+              <select class="form-select" id="isReturn" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            
+            <hr>
 
-          <!-- Remarks -->
-          <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Notes or Remarks</label>
-            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-          </div>          
+            <!-- Regular Set -->
+            <div class="form-group mb-3">
+              <label for="isRegularSet" class="form-label">Is Regular set?</label>
+              <select class="form-select" id="isRegularSet" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="mb-3" id="regularSetDetails">
+              <!-- Dynamic Table here -->
+            </div>  
 
-          <div class="text-center">
-            <button type="submit" class="btn btn-secondary">Reset</button>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
+            <hr>
+
+            <!-- Extra Uniform -->
+            <div class="form-group mb-3">
+              <label for="isSchoolUniform" class="form-label">Is school uniform?</label>
+              <select class="form-select" id="isSchoolUniform" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="mb-3" id="schoolUniformDetails">
+              <!-- Dynamic Table here -->
+            </div>  
+
+            <hr>
+            
+            <!-- Sports Uniform -->
+            <div class="form-group mb-3">
+              <label for="isSportsUniform" class="form-label">Is sports uniform?</label>
+              <select class="form-select" id="isSportsUniform" required>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="mb-3" id="sportsUniformDetails">
+              <!-- Dynamic Table here -->
+            </div>
+
+            <hr>
+
+            <!-- Belt and Socks -->
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="extraBeltAndSocks" class="form-label">Extra Belt and Socks?</label>
+                <select class="form-select" id="extraBeltAndSocks" required>
+                  <option value="0">No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="extraBeltQty" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="extraBeltQty">
+              </div>
+            </div>
+
+            <!-- Remarks -->
+            <div class="mb-3">
+              <label for="remarks" class="form-label">Notes or Remarks</label>
+              <textarea class="form-control" id="remarks" rows="3"></textarea>
+            </div>          
+
+            <div class="text-center">
+              <button class="btn btn-secondary" onclick="location.reload()">Reset</button>
+              <button class="btn btn-primary" type="submit" >Submit</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</body>
 
 <!-- Bootstrap JS and Firebase SDK -->
 <script src="./vendor/bootstrap/js/bootstrap.min.js"></script>
-<script src="./assets/js/firebase.js"></script>
-</body>
+<script src="./assets/js/firebase.js" type="module"></script>
+<script src="./assets/js/index.js"></script>
+
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<!-- Bootstrap Datepicker JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<!-- JavaScript to initialize datepicker and handle form submission -->
+<script>
+  $(document).ready(function() {
+    // Initialize Bootstrap Datepicker
+    $('#distributedOn').datepicker({
+      format: 'yyyy-mm-dd',
+      autoclose: true,
+      todayHighlight: true
+    });
+
+    // Handle form submission
+    $('#schoolUniformForm').on('submit', function(event) {
+      event.preventDefault();
+      // Get the selected date
+      const distributedOn = $('#distributedOn').val();
+      // Perform your actions with the selected date
+      console.log('Selected Report Date:', distributedOn);
+      formSubmission(distributedOn);
+    });
+  });
+</script>
+
 </html>

@@ -3,66 +3,66 @@
         "EsiIYRMPdDcJYEf4ULgLnt1V2Hv1": "admin"
     },
     "schools": {
-        "school_id_1": {
-            "school_name": "School Name 1",
+        "1": {
+            "school_name": "Memorial School",
             "students": {
-                "student_id_1": {
-                    "admission_no": "ADM001",
-                    "temporary_no": "TMP001",
+                "ADM001": {
+                    "admissionNo": "ADM001",
+                    "temporaryNo": "TMP001",
                     "name": "Student Name",
-                    "standard": "1",
-                    "division": "A",
-                    "gender": "Male"
+                    "std": "1",
+                    "div": "A",
+                    "gender": "male"
                 },
-                "student_id_2": {
-                    "admission_no": "ADM002",
-                    "temporary_no": "TMP002",
+                "ADM002": {
+                    "admissionNo": "ADM002",
+                    "temporaryNo": "",
                     "name": "Student Name 2",
-                    "standard": "2",
-                    "division": "B",
-                    "gender": "Female"
-                }
-            },
-            "school_uniform": {
-                "male": {
-                    "LKG,UKG": {"Shirt_with_Frill": [22,24,26], "Shorts": [22,24,26]},
-                    "1,2,3,4,5": {"H_S_Shirt": [22,24,26], "Shorts": [22,24,26]},
-                    "6,7,8,9,10,11,12": {"H_S_Shirt": [22,24,26], "Trouser": [22,24,26]}
-                },
-                "female": {
-                    "LKG,UKG": {"Tunic": [22,24,26]},
-                    "1,2,3,4,5": {"Pleated_Shirt": [22,24,26], "Divider": [22,24,26]},
-                    "6,7,8,9,10,11,12": {"Kali_Shirt": [22,24,26], "Waist_Coat": [22,24,26], "Pant": [22,24,26]}
-                }
-            },
-            "sports_uniform": {
-                "male": {
-                    "LKG,UKG,1,2": {"T Shirt": [22,24,26], "Shorts": [22,24,26]},
-                    "3,4,5,6,7,8,9,10,11,12": {"T Shirt": [22,24,26], "Lower": [22,24,26]}
-                },
-                "female": {
-                    "LKG,UKG,1,2": {"T Shirt": [22,24,26], "Shorts": [22,24,26]},
-                    "3,4,5,6,7,8,9,10,11,12": {"Waist Coat": [22,24,26], "Lower": [22,24,26]}
+                    "std": "2",
+                    "div": "B",
+                    "gender": "female"
                 }
             },
             "log_entries": {
-                "log_entry_id_1": {
-                    "student_id": "student_id_1",
-                    "exchange": false,
-                    "distribution": {
-                        "school_uniform": {
-                            "H_S_Shirt": "24",
-                            "Shorts": "22",
-                            "quantity": 2
+                "-NxrS5HhLufc_mt10uYF": {
+                    "admissionNo": "ADM001",
+                    "distributedBy": "shubham",
+                    "distributedOn": "2024-05-14",
+                    "extraBeltAndSocks": 1,
+                    "extraBeltQty": 2,
+                    "isExchange": 1,
+                    "isRegularSet": 1,
+                    "isReturn": 0,
+                    "isSchoolUniform": 0,
+                    "isSportsUniform": 1,
+                    "regularSet": {
+                        "Belts & Socks": {
+                            "qty": "2",
+                            "size": ""
                         },
-                        "sports_uniform": {},
-                        "belts_and_socks": true,
-                        "remarks": "Additional remarks here"
+                        "HS_Shirt": {
+                            "qty": "2",
+                            "size": "24"
+                        },
+                        "Shorts": {
+                            "qty": "2",
+                            "size": "24"
+                        }
                     },
-                    "date": "2024-05-11"
+                    "remarks": "remark",
+                    "school": "1",
+                    "sportsUniform": {
+                        "Shorts": {
+                            "qty": "1",
+                            "size": "26"
+                        },
+                        "T_Shirt": {
+                            "qty": "1",
+                            "size": "26"
+                        }
+                    }
                 }
             }
         }
     }
 }
-
