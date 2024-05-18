@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Uniform Distribution Management</title>
+  <!-- Bootstrap CSS -->
+  <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Datepicker CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" rel="stylesheet">    
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg bg-primary">
+    <div class="container-fluid ">
+      <a class="navbar-brand text-white" href="index.html">Uniform</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link text-white" aria-current="page" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" aria-current="page" href="reports.html">Reports</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active text-white" aria-current="page" href="students.html">Students</a>
+            </li>
+        </ul>
+  
+        <div class="d-flex">
+          <button class="btn btn-danger" id="logoutBtn">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+<div class="container mt-5">
+  <div class="form row mb-3">
+    <!-- School Id -->
+    <div class="form-group col-12 col-lg-4 mb-3">
+      <label for="school" class="form-label">School</label>
+      <select class="form-select" id="school" required>
+        <option selected disabled>Select School</option>
+        <option value="1">Memorial School</option>
+        <option value="2">Matriculation School</option>
+      </select>
+    </div>
+    <!-- Submit -->
+    <div class="form-group col-12 col-lg-4 mb-3">
+      <label class="form-label">&nbsp</label>
+      <div class="d-grid">
+        <button class="btn btn-primary" type="button" onclick="generateStudentTable()">Fetch Students</button>
+      </div>
+    </div>
+
+    <div class="form-group col-12 col-lg-4 mb-3">
+      <label class="form-label">&nbsp</label>
+      <div class="d-grid">
+        <button class="btn btn-success" disabled onclick="addStudent()">
+          <i class="fas fa-plus-circle"></i> Add Student
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <div class="justify-content-center">
+    <table class="table table-bordered text-center" id="student">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Admission Number</th>
+          <th scope="col">Name</th>
+          <th scope="col">Standard</th>
+          <th scope="col">Division</th>
+          <th scope="col">Gender</th>
+          <th>Edit</th>
+        </tr>
+      </thead>
+      <tbody id="studentBody">
+        <tr class="text-center"><td colspan="7">...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bootstrap JS and Firebase SDK -->
+<script src="./vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="./assets/js/firebase.js" type="module"></script>
+<script src="./assets/js/students.js"></script>
+</body>
+</html>

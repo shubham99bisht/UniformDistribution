@@ -52,13 +52,20 @@ const schoolUniformMap = {
 
 async function fetchStudentData() {
     const schoolId = document.getElementById('school').value
-    const admissionNo = document.getElementById('admissionNo').value
-    console.log(schoolId, admissionNo)
-    if (!schoolId || !admissionNo) 
-        { failMessage("Please provide school and admission number") }
+    const admNo = document.getElementById('admNo').value
+    // console.log(schoolId, admNo)
+    if (!schoolId || !admNo) 
+        { failMessage("Please provide school and admission number"); return }
 
-    const data = await readData(`schools/${schoolId}/students/${admissionNo}`)
-    
+    const data = await readData(`schools/${schoolId}/students/${admNo}`)
+    try {
+        if (data['gender'] == 'M') { data['gender'] = 'male' }
+        else { data['gender'] = 'female' }
+    } catch (e) {
+        failMessage("Failed to fetch student details"); return
+    }
+
+    // console.log(data)
     generateStudentTable(data)
     // Uniforms
     generateRegularSet(schoolId, data)
@@ -69,7 +76,7 @@ async function fetchStudentData() {
 function generateStudentTable(studentData) {
     const tbody = `
     <tbody>
-        <tr><td>Admission No</td><td>${studentData.admissionNo}</td></tr>
+        <tr><td>Admission No</td><td>${studentData.admNo}</td></tr>
         <tr><td>Temporary No</td><td>${studentData?.temporaryNo}</td></tr>
         <tr><td>Name</td><td>${studentData?.name}</td></tr>
         <tr><td>Standard</td><td>${studentData?.std}</td></tr>
@@ -83,14 +90,16 @@ function generateRegularSet(schoolId, data) {
     const uniformClasses = schoolUniformMap?.[schoolId]["school_uniform"]?.[data.gender] || []
     const uniformClass = Object.keys(uniformClasses).find(x => x.includes(data.std))
     let uniforms =  [...uniformClasses?.[uniformClass] || []]
-    uniforms.push("Belts & Socks")
+    uniforms.push("Belts")
 
     let rows = ''
     for (let i=0; i < uniforms.length; i++) {
+        size = data?.["Uniform"]?.[uniforms[i]] || ''
+        // console.log(size, uniforms[i])
         rows += `<tr>
             <td>${uniforms[i]}</td>
             <td>
-                <input type="text" class="form-control" id="regularSetSize_${i}">
+                <input type="text" class="form-control" id="regularSetSize_${i}" value="${size}">
             </td>
             <td>
                 <input type="number" class="form-control" id="regularSetQty_${i}">
@@ -118,10 +127,11 @@ function generateSchoolUniform(schoolId, data) {
 
     let rows = ''
     for (let i=0; i < uniforms.length; i++) {
+        size = data?.["Uniform"]?.[uniforms[i]] || ''
         rows += `<tr>
             <td>${uniforms[i]}</td>
             <td>
-                <input type="text" class="form-control" id="schoolUniformSize_${i}">
+                <input type="text" class="form-control" id="schoolUniformSize_${i}" value="${size}">
             </td>
             <td>
                 <input type="number" class="form-control" id="schoolUniformQty_${i}">
@@ -149,10 +159,11 @@ function generateSportsUniform(schoolId, data) {
 
     let rows = ''
     for (let i=0; i < uniforms.length; i++) {
+        size = data?.["Sports"]?.[uniforms[i]] || ''
         rows += `<tr>
             <td>${uniforms[i]}</td>
             <td>
-                <input type="text" class="form-control" id="sportsUniformSize_${i}">
+                <input type="text" class="form-control" id="sportsUniformSize_${i}" value="${size}">
             </td>
             <td>
                 <input type="number" class="form-control" id="sportsUniformQty_${i}">
@@ -181,8 +192,7 @@ async function formSubmission(distributedOn) {
         const data = {
             distributedBy: document.getElementById('distributedBy').value,
             distributedOn,
-            school: document.getElementById('school').value,
-            admissionNo: document.getElementById('admissionNo').value,
+            admNo: document.getElementById('admNo').value,
             isExchange: parseInt(document.getElementById('isExchange').value),
             isReturn: parseInt(document.getElementById('isReturn').value),
     
@@ -191,12 +201,14 @@ async function formSubmission(distributedOn) {
             isSportsUniform: parseInt(document.getElementById('isSportsUniform').value),
             
             extraBeltAndSocks: parseInt(document.getElementById('extraBeltAndSocks').value),
-            extraBeltQty: parseInt(document.getElementById('extraBeltQty').value),
+            extraBeltQty: parseInt(document.getElementById('extraBeltQty').value) || 0,
             remarks: document.getElementById('remarks').value,
         }
 
-        const schoolId = data.school
-        const studentData = await readData(`schools/${schoolId}/students/${data.admissionNo}`)
+        const schoolId = document.getElementById('school').value
+        const studentData = await readData(`schools/${schoolId}/students/${data.admNo}`)
+        if (studentData['gender'] == 'M') { studentData['gender'] = 'male' }
+        else { studentData['gender'] = 'female' }        
 
         const uniformClasses = schoolUniformMap?.[schoolId]["school_uniform"]?.[studentData.gender] || []
         const uniformClass = Object.keys(uniformClasses).find(x => x.includes(studentData.std))
@@ -206,11 +218,11 @@ async function formSubmission(distributedOn) {
 
         if (data.isRegularSet) {
             let uniforms =  [...(uniformClasses?.[uniformClass]) || []]
-            uniforms.push("Belts & Socks")
+            uniforms.push("Belts")
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
                 size = document.getElementById(`regularSetSize_${i}`).value
-                qty = document.getElementById(`regularSetQty_${i}`).value
+                qty = parseInt(document.getElementById(`regularSetQty_${i}`).value)
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['regularSet'] = uniformData
@@ -222,7 +234,7 @@ async function formSubmission(distributedOn) {
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
                 size = document.getElementById(`schoolUniformSize_${i}`).value
-                qty = document.getElementById(`schoolUniformQty_${i}`).value
+                qty = parseInt(document.getElementById(`schoolUniformQty_${i}`).value)
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['schoolUniform'] = uniformData
@@ -234,17 +246,18 @@ async function formSubmission(distributedOn) {
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
                 size = document.getElementById(`sportsUniformSize_${i}`).value
-                qty = document.getElementById(`sportsUniformQty_${i}`).value
+                qty = parseInt(document.getElementById(`sportsUniformQty_${i}`).value)
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['sportsUniform'] = uniformData
         }
     
-        console.log(data)
-        const dbPath = `schools/${schoolId}/log_entries`
-        writeDataWithNewId(dbPath, data)
-        successMessage("Data saved successfully").then(location.reload)
+        // console.log(data)
+        const dbPath = `schools/${schoolId}/log_entries/${distributedOn}`
+        await writeDataWithNewId(dbPath, data)
+        successMessage("Data saved successfully").then(() => location.reload())
     } catch (err) {
+        console.log(err)
         failMessage(err)
     }
 }
