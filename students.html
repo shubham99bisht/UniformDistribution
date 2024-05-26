@@ -41,7 +41,7 @@
 <div class="container mt-5">
   <div class="form row mb-3">
     <!-- School Id -->
-    <div class="form-group col-12 col-lg-4 mb-3">
+    <div class="form-group col-12 col-lg-3 mb-3">
       <label for="school" class="form-label">School</label>
       <select class="form-select" id="school" required>
         <option selected disabled>Select School</option>
@@ -50,21 +50,30 @@
       </select>
     </div>
     <!-- Submit -->
-    <div class="form-group col-12 col-lg-4 mb-3">
+    <div class="form-group col-12 col-lg-3 mb-3">
       <label class="form-label">&nbsp</label>
       <div class="d-grid">
         <button class="btn btn-primary" type="button" onclick="generateStudentTable()">Fetch Students</button>
       </div>
     </div>
 
-    <div class="form-group col-12 col-lg-4 mb-3">
+    <div class="form-group col-12 col-lg-3 mb-3">
       <label class="form-label">&nbsp</label>
       <div class="d-grid">
-        <button class="btn btn-success" disabled onclick="addStudent()">
+        <button class="btn btn-secondary" disabled onclick="addStudent()">
           <i class="fas fa-plus-circle"></i> Add Student
         </button>
       </div>
     </div>
+
+    <div class="form-group col-12 col-lg-3 mb-3">
+      <label class="form-label">&nbsp</label>
+      <div class="d-grid">
+        <button class="btn btn-success" onclick="exportTableToCSV('data.csv')">
+          <i class="fas fa-file-excel"></i> Export to Excel
+        </button>
+      </div>
+    </div>    
   </div>
 
   <hr>

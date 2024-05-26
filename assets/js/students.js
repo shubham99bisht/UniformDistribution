@@ -31,3 +31,29 @@ async function generateStudentTable() {
         tableBody.innerHTML += row
     }
 }
+
+function exportTableToCSV(filename) {
+    var csv = [];
+    var rows = document.querySelectorAll("table tr");
+
+    for (var i = 0; i < rows.length; i++) {
+        var row = [], cols = rows[i].querySelectorAll("td, th");
+
+        for (var j = 0; j < cols.length; j++) {
+            var cell = cols[j].innerText.replace(/"/g, '""'); // Escape double quotes
+            row.push('"' + cell + '"');
+        }
+
+        csv.push(row.join(","));
+    }
+
+    // Download CSV file
+    var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+    var downloadLink = document.createElement("a");
+    downloadLink.download = filename;
+    downloadLink.href = window.URL.createObjectURL(csvFile);
+    downloadLink.style.display = "none";
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+}

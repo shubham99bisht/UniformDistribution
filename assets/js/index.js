@@ -90,7 +90,7 @@ function generateRegularSet(schoolId, data) {
     const uniformClasses = schoolUniformMap?.[schoolId]["school_uniform"]?.[data.gender] || []
     const uniformClass = Object.keys(uniformClasses).find(x => x.includes(data.std))
     let uniforms =  [...uniformClasses?.[uniformClass] || []]
-    uniforms.push("Belts")
+    uniforms.push("Belts_and_Socks")
 
     let rows = ''
     for (let i=0; i < uniforms.length; i++) {
@@ -218,7 +218,7 @@ async function formSubmission(distributedOn) {
 
         if (data.isRegularSet) {
             let uniforms =  [...(uniformClasses?.[uniformClass]) || []]
-            uniforms.push("Belts")
+            uniforms.push("Belts_and_Socks")
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
                 size = document.getElementById(`regularSetSize_${i}`).value
@@ -261,3 +261,47 @@ async function formSubmission(distributedOn) {
         failMessage(err)
     }
 }
+
+
+// Event Listeners
+
+const isRegularSet = document.getElementById('isRegularSet');
+const regularSetDetails = document.getElementById('regularSetDetails');
+isRegularSet.addEventListener('change', function() {
+    if (isRegularSet.value == "1") {
+        regularSetDetails.classList.remove("d-none")
+    } else {
+        regularSetDetails.classList.add("d-none")
+    }
+});
+
+const isSchoolUniform = document.getElementById('isSchoolUniform');
+const schoolUniformDetails = document.getElementById('schoolUniformDetails');
+isSchoolUniform.addEventListener('change', function() {
+    if (isSchoolUniform.value == "1") {
+        schoolUniformDetails.classList.remove("d-none")
+    } else {
+        schoolUniformDetails.classList.add("d-none")
+    }
+});
+
+const isSportsUniform = document.getElementById('isSportsUniform');
+const sportsUniformDetails = document.getElementById('sportsUniformDetails');
+isSportsUniform.addEventListener('change', function() {
+    if (isSportsUniform.value == "1") {
+        sportsUniformDetails.classList.remove("d-none")
+    } else {
+        sportsUniformDetails.classList.add("d-none")
+    }
+});
+
+const extraBeltAndSocks = document.getElementById('extraBeltAndSocks');
+const extraBeltQty = document.getElementById('extraBeltQty');
+extraBeltAndSocks.addEventListener("change", function() {
+    if (extraBeltAndSocks.value == "1") {
+        extraBeltQty.attributes.removeNamedItem("disabled")
+    } else {
+        extraBeltQty.disabled = true
+        extraBeltQty.value = 0
+    }
+})
