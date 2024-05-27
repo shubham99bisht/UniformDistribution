@@ -156,3 +156,9 @@ window.writeDataWithNewId = async (dbPath, data) => {
     return false;
   }
 }
+
+const schoolNameMap = {
+  "1": "Memorial",
+  "2": "Matriculation"
+}
+window.schoolNameMap = schoolNameMap
