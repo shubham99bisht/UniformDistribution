@@ -1,4 +1,6 @@
-f = open('data.csv', 'r')
+import json
+
+f = open('../UniformAssets/data.csv', 'r')
 
 lines = f.readlines()
 
@@ -17,5 +19,6 @@ for l in lines[1:]:
     data[admNo][uniform][component] = size
     
 print(len(admNos))
-print(data)
 
+with open('data.json', 'w') as file:
+    json.dump(data, file, indent=4)

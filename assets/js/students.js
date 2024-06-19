@@ -9,7 +9,7 @@ async function generateStudentTable() {
     tableBody.innerHTML = ''
 
     let i = 0;
-    for (let stId of Object.keys(data)) {
+    for (let stId of Object.keys(data).slice(1,100)) {
         i += 1;
         let studentData = data[stId]
         try {
