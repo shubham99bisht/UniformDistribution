@@ -260,7 +260,7 @@ async function exportToCSV(filename) {
     
     for (let i = 0; i < rows.length; i++) {
         const values = Object.values(rows[i])
-        csv.push(`${i+1},` + values.join(","));
+        csv.push(`${i+1},` + values.join(",").replace(/\n/g, ". "));
     }
 
     // Download CSV file

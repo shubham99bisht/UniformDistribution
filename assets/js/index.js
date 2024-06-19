@@ -188,22 +188,26 @@ function generateSportsUniform(schoolId, data) {
 async function formSubmission(distributedOn) {
     processingMessage();
 
+    console.log(distributedOn)
+
     try{
         const data = {
             distributedBy: document.getElementById('distributedBy').value,
             distributedOn,
             admNo: document.getElementById('admNo').value,
-            isExchange: parseInt(document.getElementById('isExchange').value),
-            isReturn: parseInt(document.getElementById('isReturn').value),
+            isExchange: parseInt(document.getElementById('isExchange').value) || 0,
+            isReturn: parseInt(document.getElementById('isReturn').value) || 0,
     
-            isRegularSet: parseInt(document.getElementById('isRegularSet').value),
-            isSchoolUniform: parseInt(document.getElementById('isSchoolUniform').value),
-            isSportsUniform: parseInt(document.getElementById('isSportsUniform').value),
+            isRegularSet: parseInt(document.getElementById('isRegularSet').value) || 0,
+            isSchoolUniform: parseInt(document.getElementById('isSchoolUniform').value) || 0,
+            isSportsUniform: parseInt(document.getElementById('isSportsUniform').value) || 0,
             
-            extraBeltAndSocks: parseInt(document.getElementById('extraBeltAndSocks').value),
+            extraBeltAndSocks: parseInt(document.getElementById('extraBeltAndSocks').value) || 0,
             extraBeltQty: parseInt(document.getElementById('extraBeltQty').value) || 0,
-            remarks: document.getElementById('remarks').value,
+            remarks: document.getElementById('remarks').value || '',
         }
+
+        console.log(data)
 
         const schoolId = document.getElementById('school').value
         const studentData = await readData(`schools/${schoolId}/students/${data.admNo}`)
@@ -221,8 +225,9 @@ async function formSubmission(distributedOn) {
             uniforms.push("Belts_and_Socks")
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
-                size = document.getElementById(`regularSetSize_${i}`).value
+                size = document.getElementById(`regularSetSize_${i}`).value || ''
                 qty = parseInt(document.getElementById(`regularSetQty_${i}`).value)
+                if (!qty && qty!=0) throw new Error("Quantity can't be empty");
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['regularSet'] = uniformData
@@ -233,8 +238,9 @@ async function formSubmission(distributedOn) {
 
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
-                size = document.getElementById(`schoolUniformSize_${i}`).value
+                size = document.getElementById(`schoolUniformSize_${i}`).value || ''
                 qty = parseInt(document.getElementById(`schoolUniformQty_${i}`).value)
+                if (!qty && qty!=0) throw new Error("Quantity can't be empty");
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['schoolUniform'] = uniformData
@@ -245,8 +251,9 @@ async function formSubmission(distributedOn) {
 
             let uniformData = {}
             for (let i=0; i < uniforms.length; i++) {
-                size = document.getElementById(`sportsUniformSize_${i}`).value
+                size = document.getElementById(`sportsUniformSize_${i}`).value || ''
                 qty = parseInt(document.getElementById(`sportsUniformQty_${i}`).value)
+                if (!qty && qty!=0) throw new Error("Quantity can't be empty");
                 uniformData[uniforms[i]] = {size, qty}
             }
             data['sportsUniform'] = uniformData
@@ -254,8 +261,15 @@ async function formSubmission(distributedOn) {
     
         // console.log(data)
         const dbPath = `schools/${schoolId}/log_entries/${distributedOn}`
-        await writeDataWithNewId(dbPath, data)
-        successMessage("Data saved successfully").then(() => location.reload())
+
+        console.log(dbPath, data)
+
+        const suc = await writeDataWithNewId(dbPath, data)
+        if (suc) {
+            successMessage("Data saved successfully").then(() => location.reload())
+        } else {
+            failMessage("Missing or Invalid fields, please verify all data.")
+        }
     } catch (err) {
         console.log(err)
         failMessage(err)
