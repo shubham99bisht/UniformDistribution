@@ -63,9 +63,193 @@
     <div class="form-group col-12 col-lg-3 mb-3">
       <label class="form-label">&nbsp</label>
       <div class="d-grid">
-        <button class="btn btn-secondary" disabled onclick="addStudent()">
+        <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
           <i class="fas fa-plus-circle"></i> Add Student
         </button>
+      </div>
+    </div>
+
+    <!-- Add Student Modal -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1" aria-labelledby="addStudentModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="addStudentModalLabel">Add Student</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="addStudentForm">
+              <div class="mb-3">
+                <label for="addStudSchool" class="form-label fw-medium">School</label>
+                <select class="form-select" aria-label="Select School" id="addStudSchool" name="schoolId" required>
+                  <option selected disabled>Select School</option>
+                  <option value="1">Memorial School</option>
+                  <option value="2">Matriculation School</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="addStudAdmNo" class="form-label fw-medium">Admission Number</label>
+                <input type="text" class="form-control" id="addStudAdmNo" name="admNo" required>
+              </div>
+
+              <div class="d-flex gap-5">
+                <div class="mb-3" style="width: 45%;">
+                  <label for="addStudStd" class="form-label fw-medium">Standard</label>
+                  <select class="form-select" aria-label="Select Standard" id="addStudStd" name="std" required>
+                    <option selected disabled>Select Standard</option>
+                    <option value="LKG">LKG</option>
+                    <option value="UKG">UKG</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                </div>
+
+                <div class="mb-3" style="width: 45%;">
+                  <label for="addStudDiv" class="form-label fw-medium">Division</label>
+                  <select class="form-select" aria-label="Select Divison" id="addStudDiv" name="div" required>
+                    <option selected disabled>Select Division</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="addStudName" class="form-label fw-medium">Name</label>
+                <input type="text" class="form-control" id="addStudName" name="name" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="addStudGender" class="form-label fw-medium">Gender</label>
+                <select class="form-select" aria-label="Select Gender" id="addStudGender" name="gender" required>
+                  <option selected disabled>Select Gender</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id ="closeAddStudModal">Close</button>
+              <button type="submit" class="btn btn-primary">Add Student</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    
+    <button class="btn btn-secondary visually-hidden" id="openEditStudModal" data-bs-toggle="modal" data-bs-target="#editStudentModal"></button>
+    <!-- Edit Student Modal -->
+    <div class="modal fade" id="editStudentModal" tabindex="-1" aria-labelledby="editStudentModal" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="editStudentModalLabel">Edit Student</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+
+          <div class="modal-body">
+            <form id="editStudentForm">
+              <input type="text" id="oldAdmNo" hidden >
+
+              <div class="mb-3">
+                <label for="editStudSchool" class="form-label fw-medium">School</label>
+                <select class="form-select" aria-label="Select School" id="editStudSchool" name="schoolId" disabled>
+                  <option selected disabled>Select School</option>
+                  <option value="1">Memorial School</option>
+                  <option value="2">Matriculation School</option>
+                </select>
+              </div>
+
+              <div class="mb-3">
+                <label for="editStudAdmNo" class="form-label fw-medium">Admission Number</label>
+                <input type="text" class="form-control" id="editStudAdmNo" name="admNo" readonly>
+              </div>
+
+              <div class="d-flex gap-5">
+                <div class="mb-3" style="width: 45%;">
+                  <label for="editStudStd" class="form-label fw-medium">Standard</label>
+                  <select class="form-select" aria-label="Select Standard" id="editStudStd" name="std" required>
+                    <option selected disabled>Select Standard</option>
+                    <option value="LKG">LKG</option>
+                    <option value="UKG">UKG</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                </select>
+                </div>
+
+                <div class="mb-3" style="width: 45%;">
+                  <label for="editStudDiv" class="form-label fw-medium">Division</label>
+                  <select class="form-select" aria-label="Select Divison" id="editStudDiv" name="div" required>
+                    <option selected disabled>Select Division</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="H">H</option>
+                    <option value="I">I</option>
+                    <option value="J">J</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label for="editStudName" class="form-label fw-medium">Name</label>
+                <input type="text" class="form-control" id="editStudName" name="name" required>
+              </div>
+
+              <div class="mb-3">
+                <label for="editStudGender" class="form-label fw-medium">Gender</label>
+                <select class="form-select" aria-label="Select Gender" id="editStudGender" name="gender" required>
+                  <option selected disabled>Select Gender</option>
+                  <option value="M">Male</option>
+                  <option value="F">Female</option>
+                </select>
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id ="closeEditStudModal">Close</button>
+              <button type="submit" class="btn btn-primary">Save Updates</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
 
