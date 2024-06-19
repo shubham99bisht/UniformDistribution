@@ -24,6 +24,8 @@ searchForm.addEventListener('submit', async function (e) {
     }
 
     const { name, gender, std, div } = data;
+    
+    // Set form data
     document.getElementById('schoolId').value = schoolId;
     document.getElementById('admNo').value = admNo;
     document.getElementById('name').value = name;
@@ -33,7 +35,7 @@ searchForm.addEventListener('submit', async function (e) {
 
     document.getElementById('updateStudBtn').disabled = false;
   } catch (error) {
-    failMessage('Failed to fetch record!');
+    failMessage('Failed to fetch student record!');
     document.getElementById('studentDetailForm').reset();
     return;
   }
@@ -43,7 +45,7 @@ const studentDetailForm = document.getElementById('studentDetailForm');
 studentDetailForm.addEventListener('submit', async function (e) {
   e.preventDefault();
 
-  processingMessage('Editing student');
+  processingMessage('Updating student details...');
 
   const formData = new FormData(e.target);
   const data = Object.fromEntries(formData.entries());
@@ -68,7 +70,7 @@ studentDetailForm.addEventListener('submit', async function (e) {
   const dbPath = `schools/${schoolId}/students/${admNo}`;
 
   try {
-    const isAdded = await writeData(dbPath, {
+    const isUpdated = await writeData(dbPath, {
       admNo,
       std,
       div,
@@ -76,15 +78,15 @@ studentDetailForm.addEventListener('submit', async function (e) {
       gender,
     });
 
-    if (!isAdded) {
-      failMessage("Couldn't edit student!");
+    if (!isUpdated) {
+      failMessage("Failed to update student details!");
       return;
     }
 
-    successMessage('Student details edited successfully!');
+    successMessage('Student details updated successfully!');
   } catch (error) {
     console.log(error);
-    failMessage("Couldn't edit student details!");
+    failMessage("Failed to update student details!");
     return;
   }
 });

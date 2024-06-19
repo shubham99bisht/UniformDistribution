@@ -1,15 +1,72 @@
-async function generateStudentTable() {
+function getPageParams() {
+    const searchParams = new URLSearchParams(location.search);
+    const page = parseInt(searchParams.get('page'));
+    const schoolId = searchParams.get('schoolId');
+
+    return { page, schoolId };
+}
+
+window.addEventListener("load", async function() {
+    let { page, schoolId } = getPageParams();
+
+    if (page && !schoolId) {
+        location.href = 'students.html';
+        return;
+    }
+    
+    if (!page) page = 1;
+    if (schoolId && schoolId != 1 && schoolId != 2) {
+        alert("Invalid school id");
+        location.href = 'students.html';
+        return;
+    }
+
+    if (schoolId) {
+        document.getElementById("school").value = schoolId;
+        const startIdx = (page - 1) * 100;
+        await generateStudentTable(startIdx);
+    }
+})
+
+document.getElementById('prevBtn').addEventListener('click', function () {
+    const { page } = getPageParams();
+    const schoolId = document.getElementById("school").value;
+
+    if (page > 1 && schoolId)  {
+        location.href = `students.html?schoolId=${schoolId}&page=${page - 1}`
+    }
+})
+
+document.getElementById('nextBtn').addEventListener('click', function () {
+    let { page } = getPageParams();
+    if (!page) page = 1;
+
+    const schoolId = document.getElementById("school").value;
+
+    if (schoolId)  {
+        location.href = `students.html?schoolId=${schoolId}&page=${page + 1}`
+    }
+})
+
+async function generateStudentTable(startIdx=0) {
     const schoolId = document.getElementById('school').value
 
     if (!schoolId) 
         { failMessage("Please select school"); return }
 
     const data = await readData(`schools/${schoolId}/students/`)
+    const curatedData = Object.keys(data).slice(startIdx, startIdx + 100)
+
     const tableBody = document.getElementById('studentBody')
     tableBody.innerHTML = ''
+    
+    if (!curatedData?.length) {
+        tableBody.innerHTML = '<h4 class="p-4">No students found!</h4>';
+        return;
+    }
 
-    let i = 0;
-    for (let stId of Object.keys(data).slice(0, 100)) {
+    let i = startIdx;
+    for (let stId of curatedData) {
         i += 1;
         let studentData = data[stId]
         try {
@@ -31,31 +88,37 @@ async function generateStudentTable() {
         tableBody.innerHTML += row
     }
 
-    const btns = document.getElementsByClassName("edit-stud-btn");
-    for (let btn of btns) {
-        btn.addEventListener("click", async function (e) {
-            const schoolId = e.target.getAttribute("data-school");
-            const admNo = e.target.getAttribute("data-admNo");
-            const docPath = `schools/${schoolId}/students/${admNo}`;
-            const data = await readData(docPath);
-            
-            if (!data) {
-                failMessage("No student found!");
-                return;
-            }
+    addEditButtonsEventListener();
+}
 
-            const { name, gender, std, div } = data;
-            document.getElementById('editStudSchool').value = schoolId;
-            document.getElementById('oldAdmNo').value = admNo;
-            document.getElementById('editStudAdmNo').value = admNo;
-            document.getElementById('editStudStd').value = std;
-            document.getElementById('editStudDiv').value = div;
-            document.getElementById('editStudName').value = name;
-            document.getElementById('editStudGender').value = gender;
+function addEditButtonsEventListener() {
+  const editButtons = document.getElementsByClassName('edit-stud-btn');
+  for (let button of editButtons) {
+    button.addEventListener('click', async function (e) {
+      const schoolId = e.target.getAttribute('data-school');
+      const admNo = e.target.getAttribute('data-admNo');
 
-            document.getElementById('openEditStudModal').click();
-        })
-    }
+      const docPath = `schools/${schoolId}/students/${admNo}`;
+      const data = await readData(docPath);
+
+      if (!data) {
+        failMessage('No student found!');
+        return;
+      }
+
+      const { name, gender, std, div } = data;
+
+      // Set Modal Data
+      document.getElementById('editStudSchool').value = schoolId;
+      document.getElementById('editStudAdmNo').value = admNo;
+      document.getElementById('editStudStd').value = std;
+      document.getElementById('editStudDiv').value = div;
+      document.getElementById('editStudName').value = name;
+      document.getElementById('editStudGender').value = gender;
+
+      document.getElementById('openEditStudModal').click();
+    });
+  }
 }
 
 function exportTableToCSV(filename) {
@@ -88,7 +151,7 @@ const addStudentForm = document.getElementById("addStudentForm");
 addStudentForm.addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    processingMessage("Adding student");
+    processingMessage("Adding student...");
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
@@ -126,16 +189,16 @@ addStudentForm.addEventListener("submit", async function(e) {
         });
 
         if (!isAdded) {
-            failMessage("Couldn't add student!");
+            failMessage("Failed to add student!");
             return;
         }
 
-        successMessage("Added student successfully!");
+        successMessage("Student added successfully!");
         document.getElementById('closeAddStudModal').click();
 
     } catch (error) {
         console.log(error);
-        failMessage("Couldn't add student!");
+        failMessage("Failed to add student!");
         return;
     }
 
@@ -145,7 +208,7 @@ const editStudentForm = document.getElementById("editStudentForm");
 editStudentForm.addEventListener("submit", async function(e) {
     e.preventDefault();
 
-    processingMessage("Editing student");
+    processingMessage("Updating details...");
 
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
@@ -169,7 +232,7 @@ editStudentForm.addEventListener("submit", async function(e) {
     const dbPath = `schools/${schoolId}/students/${admNo}`;
 
     try {
-        const isAdded = await writeData(dbPath, {
+        const isUpdated = await writeData(dbPath, {
             admNo,
             std,
             div, 
@@ -177,18 +240,16 @@ editStudentForm.addEventListener("submit", async function(e) {
             gender,
         });
 
-        if (!isAdded) {
-            failMessage("Couldn't edit student!");
+        if (!isUpdated) {
+            failMessage("Failed to update student details!");
             return;
         }
 
-        successMessage("Student details edited successfully!");
+        successMessage("Student details updated successfully!");
         document.getElementById('closeEditStudModal').click();
-
     } catch (error) {
         console.log(error);
-        failMessage("Couldn't edit student details!");
+        failMessage("Failed to update student details!");
         return;
     }
-
 })
