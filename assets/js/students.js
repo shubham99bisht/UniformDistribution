@@ -187,7 +187,7 @@ editStudentForm.addEventListener("submit", async function(e) {
 
     } catch (error) {
         console.log(error);
-        failMessage("Couldn't add student!");
+        failMessage("Couldn't edit student details!");
         return;
     }
 
