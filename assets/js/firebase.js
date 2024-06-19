@@ -136,7 +136,6 @@ window.writeData = async (dbPath, data) => {
   const dbRef = ref(db, dbPath);
   try {
     await set(dbRef, data);
-    await logChange(dbPath, "created", data); // Logging the creation
     console.log("Data written successfully!");
     return true;
   } catch (error) {
