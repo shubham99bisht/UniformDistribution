@@ -1,3 +1,5 @@
+let allStudentsData;
+
 function getPageParams() {
     const searchParams = new URLSearchParams(location.search);
     const page = parseInt(searchParams.get('page'));
@@ -54,8 +56,8 @@ async function generateStudentTable(startIdx=0) {
     if (!schoolId) 
         { failMessage("Please select school"); return }
 
-    const data = await readData(`schools/${schoolId}/students/`)
-    const curatedData = Object.keys(data).slice(startIdx, startIdx + 100)
+    allStudentsData = await readData(`schools/${schoolId}/students/`)
+    const curatedData = Object.keys(allStudentsData).slice(startIdx, startIdx + 100)
 
     const tableBody = document.getElementById('studentBody')
     tableBody.innerHTML = ''
@@ -68,13 +70,7 @@ async function generateStudentTable(startIdx=0) {
     let i = startIdx;
     for (let stId of curatedData) {
         i += 1;
-        let studentData = data[stId]
-        try {
-            if (studentData['gender'] == 'M') { studentData['gender'] = 'male' }
-            else { studentData['gender'] = 'female' }
-        } catch (e) {
-            failMessage("Failed to fetch student details"); continue
-        }
+        let studentData = allStudentsData[stId];
 
         const row = `<tr>
             <td>${i}</td>
@@ -82,7 +78,7 @@ async function generateStudentTable(startIdx=0) {
             <td>${studentData['name']}</td>
             <td>${studentData['std']}</td>
             <td>${studentData['div']}</td>
-            <td>${studentData['gender']}</td>
+            <td>${studentData['gender'] === 'M' ? 'Male': 'Female'}</td>
             <td><button class="btn btn-primary edit-stud-btn" data-school=${schoolId} data-admNo=${studentData['admNo']}>Edit</button></td>
         </tr>`
         tableBody.innerHTML += row
@@ -122,23 +118,34 @@ function addEditButtonsEventListener() {
 }
 
 function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+    if (!allStudentsData) {
+        failMessage("No data found!");
+        return;
+    }
 
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+    const csv = [
+      ['S. No.', 'Admission No.', 'Name', 'Standard', 'Division', 'Gender'],
+    ];
 
-        for (var j = 0; j < cols.length; j++) {
-            var cell = cols[j].innerText.replace(/"/g, '""'); // Escape double quotes
-            row.push('"' + cell + '"');
-        }
+    let i = 1;
+    for (let key in allStudentsData) {
+      const student = allStudentsData[key];
+      if (student) {
+        const { admNo, name, std, div } = student;
+        const gender = student['gender'] === 'M' ? 'Male' : 'Female';
+        csv.push([i, admNo, name, std, div, gender].join(','));
+        i++;
+      }
+    }
 
-        csv.push(row.join(","));
+    if (csv.length === 1) {
+        failMessage("No data found!");
+        return;
     }
 
     // Download CSV file
-    var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
-    var downloadLink = document.createElement("a");
+    const csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
+    const downloadLink = document.createElement("a");
     downloadLink.download = filename;
     downloadLink.href = window.URL.createObjectURL(csvFile);
     downloadLink.style.display = "none";
@@ -167,7 +174,7 @@ addStudentForm.addEventListener("submit", async function(e) {
         return;
     }
 
-    const dbPath = `schools/${schoolId}/students/${admNo}`;
+    const dbPath = `schools/${schoolId}/students/${admNo}/`;
 
     try {
         const studentExists = await readData(dbPath);
@@ -177,8 +184,10 @@ addStudentForm.addEventListener("submit", async function(e) {
         }
 
         const reConfirm = confirm("Are you sure?");
-        if (!reConfirm)
+        if (!reConfirm) {
+            closeSwal();
             return;
+        }
 
         const isAdded = await writeData(dbPath, {
             admNo,
@@ -195,6 +204,10 @@ addStudentForm.addEventListener("submit", async function(e) {
 
         successMessage("Student added successfully!");
         document.getElementById('closeAddStudModal').click();
+
+        const page = getPageParams()?.page || 1;
+        const startIdx = (page - 1) * 100;
+        await generateStudentTable(startIdx);
 
     } catch (error) {
         console.log(error);
@@ -226,8 +239,10 @@ editStudentForm.addEventListener("submit", async function(e) {
     }
     
     const reConfirm = confirm("Are you sure?");
-    if (!reConfirm)
+    if (!reConfirm) {
+        closeSwal();
         return;
+    }
 
     const dbPath = `schools/${schoolId}/students/${admNo}`;
 
@@ -247,6 +262,10 @@ editStudentForm.addEventListener("submit", async function(e) {
 
         successMessage("Student details updated successfully!");
         document.getElementById('closeEditStudModal').click();
+        
+        const page = getPageParams()?.page || 1;
+        const startIdx = (page - 1) * 100;
+        await generateStudentTable(startIdx);
     } catch (error) {
         console.log(error);
         failMessage("Failed to update student details!");
