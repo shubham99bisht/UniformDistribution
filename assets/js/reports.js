@@ -11,6 +11,44 @@ async function fetchStudentData(schoolId, admNo) {
     return data
 }
 
+let report;
+const recordsPerPage = 500;
+
+window.addEventListener("load", async function() {
+    let { page, schoolId, std, div, date } = getPageParams();
+    page = parseInt(page);
+
+    if ((page || std || div) && (!schoolId || !date)) {
+        location.href = 'reports.html';
+        return;
+    }
+    
+    if (!page) page = 1;
+
+    const validSchools = ['1', '2'];
+    const validStds = ['LKG', 'UKG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+    const validDivs = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+
+    if ((schoolId && !validSchools.includes(schoolId)) ||
+        (std && !validStds.includes(std)) ||
+        (div && !validDivs.includes(div)) ||
+        (date && !isValidDateString(date))
+    ) {
+        alert("Invalid params");
+        location.href = 'reports.html';
+        return;
+    }
+
+    if (std)  document.getElementById("std").value = std;
+    if (div)  document.getElementById("div").value = div;
+
+    if (schoolId && date) {
+        document.getElementById("school").value = schoolId;
+        document.getElementById("distributedOn").value = date;
+        await fetchReportData(date);
+    }
+})
+
 async function fetchReportData(distributedOn) {
 
     if (!distributedOn) {
@@ -66,10 +104,19 @@ async function fetchReportData(distributedOn) {
         }
         report.push(row)
     }
-    showReport(report, distributedOn)
+
+    const page = parseInt(getPageParams()?.page) || 1;
+    const startIdx = (page - 1) * recordsPerPage;
+    const endIdx = startIdx + recordsPerPage;
+    const curatedReports = report.slice(startIdx, endIdx);
+
+    showReport(curatedReports, distributedOn)
 }
 
 function showReport(report, distributedOn) {
+    const page = parseInt(getPageParams()?.page) || 1;
+    let startIdx = (page - 1) * recordsPerPage;
+
     const tableBody = document.getElementById('reportTableBody')
     tableBody.innerHTML = ""
 
@@ -88,7 +135,7 @@ function showReport(report, distributedOn) {
         isReturn = report[i]?.isReturn == "1" ? "Yes" : "No"
 
         const tableRow = `<tr>
-            <td>${i+1}</td>
+            <td>${++startIdx}</td>
             <td>${report[i]?.admNo}</td>
             <td>${report[i]?.name}</td>
             <td>${report[i]?.std + ' ' +report[i]?.div}</td>
@@ -120,20 +167,83 @@ function showReport(report, distributedOn) {
     </tr>`
 }
 
-function exportTableToCSV(filename) {
-    var csv = [];
-    var rows = document.querySelectorAll("table tr");
+document.getElementById('prevBtn').addEventListener('click', function () {
+  const page = parseInt(getPageParams()?.page) || 1;
+  const schoolId = document.getElementById('school').value;
+  const std = document.getElementById('std').value;
+  const div = document.getElementById('div').value;
+  const date = document.getElementById('distributedOn').value;
 
-    for (var i = 0; i < rows.length; i++) {
-        var row = [], cols = rows[i].querySelectorAll("td, th");
+  if (page > 1 && schoolId && isValidDateString(date)) {
+    location.href = `reports.html?schoolId=${schoolId}&page=${
+      page - 1
+    }&std=${std}&div=${div}&date=${date}`;
+  }
+});
 
-        for (var j = 0; j < cols.length; j++) {
-            var cell = cols[j].innerText.replace(/"/g, '""'); // Escape double quotes
-            row.push('"' + cell + '"');
-        }
-
-        csv.push(row.join(","));
+document.getElementById('nextBtn').addEventListener('click', function () {
+    const page = parseInt(getPageParams()?.page) || 1;
+    const schoolId = document.getElementById('school').value;
+    const std = document.getElementById('std').value;
+    const div = document.getElementById('div').value;
+    const date = document.getElementById('distributedOn').value;
+  
+    if (schoolId && isValidDateString(date)) {
+      location.href = `reports.html?schoolId=${schoolId}&page=${
+        page + 1
+      }&std=${std}&div=${div}&date=${date}`;
     }
+})
+
+function exportTableToCSV(filename) {
+    const csv = [
+        ['S. No.', 'Admission No.', 'Name', 'Class', 'Gender', 'Distributed By', 'Exchange', 
+        'Return', 'Regular', 'Extra', 'Belts Socks', 'Sports'],
+    ];
+
+    let count = 1;
+
+    let regularTotal = 0
+    let extraTotal = 0
+    let sportsTotal = 0
+    let beltTotal = 0
+
+    for (let item of report) {
+      if (!item.admNo) continue;
+
+      csv.push([
+        count++,
+        item.admNo,
+        item.name,
+        `${item.std}  ${item.div}`,
+        item.gender,
+        item.distributedBy,
+        item.isExchange ? 'Yes' : 'No',
+        item.isReturn ? 'Yes' : 'No',
+        item?.regularSet || 0,
+        item?.extraSet || 0,
+        item?.extraBelt || 0,
+        item?.sportsSet || 0,
+      ].join(','));
+
+      if (item.isExchange) continue;
+
+      let sign = 1;
+      if (item.isReturn) sign = -1;
+
+      regularTotal += sign * (item?.regularSet || 0);
+      extraTotal += sign * (item?.extraSet || 0);
+      sportsTotal += sign * (item?.sportsSet || 0);
+      beltTotal += sign * (item?.extraBelt || 0);
+    }
+
+    if (count === 1) {
+        failMessage("No record found!");
+        return;
+    }
+
+    csv.push([' ', ' ', ' ', ' ', ' ', ' ', ' ', 'Total', 
+            regularTotal, extraTotal, beltTotal, sportsTotal].join(','));
 
     // Download CSV file
     var csvFile = new Blob([csv.join("\n")], { type: "text/csv" });
@@ -204,4 +314,14 @@ function exportTableToPDF() {
     doc.text(footerText, pageWidth - textWidth - padding, bottomY);
 
     doc.save('table_data.pdf');
+}
+
+function isValidDateString(dateString) {
+  // Regular expression to match the date format "YYYY-MM-DD"
+  const regex = /^\d{4}-\d{2}-\d{2}$/;
+
+  if (!regex.test(dateString)) return false;
+  const date = new Date(dateString);
+  if (date == 'Invalid Date') return false;
+  return true;
 }

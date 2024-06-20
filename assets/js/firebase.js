@@ -161,3 +161,10 @@ const schoolNameMap = {
   "2": "Matriculation"
 }
 window.schoolNameMap = schoolNameMap
+
+
+window.getPageParams = function () {
+  const searchParams = new URLSearchParams(location.search);
+  const params = Object.fromEntries(searchParams.entries())
+  return params;
+}

@@ -1,15 +1,9 @@
 let allStudentsData;
-
-function getPageParams() {
-    const searchParams = new URLSearchParams(location.search);
-    const page = parseInt(searchParams.get('page'));
-    const schoolId = searchParams.get('schoolId');
-
-    return { page, schoolId };
-}
+const recordsPerPage = 100;
 
 window.addEventListener("load", async function() {
     let { page, schoolId } = getPageParams();
+    page = parseInt(page);
 
     if (page && !schoolId) {
         location.href = 'students.html';
@@ -25,13 +19,13 @@ window.addEventListener("load", async function() {
 
     if (schoolId) {
         document.getElementById("school").value = schoolId;
-        const startIdx = (page - 1) * 100;
+        const startIdx = (page - 1) * recordsPerPage;
         await generateStudentTable(startIdx);
     }
 })
 
 document.getElementById('prevBtn').addEventListener('click', function () {
-    const { page } = getPageParams();
+    const page = parseInt(getPageParams()?.page) || 1;
     const schoolId = document.getElementById("school").value;
 
     if (page > 1 && schoolId)  {
@@ -40,8 +34,7 @@ document.getElementById('prevBtn').addEventListener('click', function () {
 })
 
 document.getElementById('nextBtn').addEventListener('click', function () {
-    let { page } = getPageParams();
-    if (!page) page = 1;
+    let page = parseInt(getPageParams()?.page) || 1;
 
     const schoolId = document.getElementById("school").value;
 
@@ -57,7 +50,7 @@ async function generateStudentTable(startIdx=0) {
         { failMessage("Please select school"); return }
 
     allStudentsData = await readData(`schools/${schoolId}/students/`)
-    const curatedData = Object.keys(allStudentsData).slice(startIdx, startIdx + 100)
+    const curatedData = Object.keys(allStudentsData).slice(startIdx, startIdx + recordsPerPage)
 
     const tableBody = document.getElementById('studentBody')
     tableBody.innerHTML = ''
@@ -205,8 +198,8 @@ addStudentForm.addEventListener("submit", async function(e) {
         successMessage("Student added successfully!");
         document.getElementById('closeAddStudModal').click();
 
-        const page = getPageParams()?.page || 1;
-        const startIdx = (page - 1) * 100;
+        const page = parseInt(getPageParams()?.page) || 1;
+        const startIdx = (page - 1) * recordsPerPage;
         await generateStudentTable(startIdx);
 
     } catch (error) {
@@ -263,8 +256,8 @@ editStudentForm.addEventListener("submit", async function(e) {
         successMessage("Student details updated successfully!");
         document.getElementById('closeEditStudModal').click();
         
-        const page = getPageParams()?.page || 1;
-        const startIdx = (page - 1) * 100;
+        const page = parseInt(getPageParams()?.page) || 1;
+        const startIdx = (page - 1) * recordsPerPage;
         await generateStudentTable(startIdx);
     } catch (error) {
         console.log(error);
